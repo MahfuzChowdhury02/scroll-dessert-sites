@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scroll Dessert Sites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#ebe5db;--ink:#1c1726;--muted:#6a6272}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font-family:'Manrope',system-ui,sans-serif;
+    display:flex;flex-direction:column;justify-content:center;padding:8vh 6vw;gap:40px}
+  h1{margin:0;font-family:'Bodoni Moda',serif;font-weight:500;font-size:clamp(44px,7vw,104px);line-height:.95}
+  p{margin:0;color:var(--muted);max-width:46ch;line-height:1.6}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  a.card{display:block;text-decoration:none;color:inherit;background:#f6f1e8;border-radius:20px;overflow:hidden;transition:transform .3s,box-shadow .3s}
+  a.card:hover{transform:translateY(-4px);box-shadow:0 24px 50px -24px rgba(40,20,60,.35)}
+  .thumb{aspect-ratio:16/9;background-size:cover;background-position:center}
+  .meta{padding:18px 20px 22px}
+  .meta b{display:block;font-family:'Bodoni Moda',serif;font-weight:500;font-size:26px;margin-bottom:6px}
+  .meta span{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+  <h1>Scroll dessert sites</h1>
+  <p>Two scroll-driven landing pages. Each one is a single HTML file with no build step.</p>
+  <div class="grid">
+    <a class="card" href="indulge/">
+      <div class="thumb" style="background-image:url(indulge/assets/frames/1280/f_090.webp)"></div>
+      <div class="meta"><b>Indulge</b><span>Photoreal ice cream splash, scrubbed frame by frame as you scroll.</span></div>
+    </a>
+    <a class="card" href="cake-studio/">
+      <div class="thumb" style="background:#ddd6ca radial-gradient(circle at 60% 60%,#3a2219 0 18%,transparent 19%)"></div>
+      <div class="meta"><b>Cake Studio</b><span>Canvas cake you slice, cream and top with a cherry.</span></div>
+    </a>
+  </div>
+</body>
+</html>

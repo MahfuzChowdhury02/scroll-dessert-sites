@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cream — Indulge</title>
+<meta name="description" content="Small-batch ice cream, poured to order. No. 4, Melt Melt: blueberry liquid transformation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#ebe5db; --cream-2:#e2dacd; --ink:#1c1726; --muted:#6a6272;
+    --plum:#24103a; --violet:#7b4bd0; --lav:#cbb7f0; --paper:#f6f1e8;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  button,input{font:inherit;color:inherit}
+  a{color:inherit}
+  .serif{font-family:'Bodoni Moda',Georgia,serif}
+  :focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+
+  /* nav */
+  .nav{position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:20px;
+    padding:22px 40px;color:var(--ink);transition:color .4s}
+  body.on-dark .nav{color:var(--paper)}
+  .brand{display:flex;align-items:baseline;gap:18px;text-decoration:none}
+  .brand b{font-family:'Bodoni Moda',serif;font-size:22px;font-weight:600;letter-spacing:.08em}
+  .brand span{font-size:12px;letter-spacing:.02em;opacity:.75}
+  .nav-r{display:flex;align-items:center;gap:14px}
+  .pill{border:1px solid currentColor;border-radius:999px;padding:9px 18px;font-size:12px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;text-decoration:none;background:transparent;cursor:pointer;transition:background .25s,color .25s}
+  .pill:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  body.on-dark .pill:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .burger{width:40px;height:40px;border:0;background:transparent;cursor:pointer;display:grid;place-content:center;gap:6px}
+  .burger i{display:block;width:22px;height:1.5px;background:currentColor;transition:transform .3s}
+
+  /* hero */
+  .hero{position:relative;height:440vh}
+  .stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden;background:#e4dccf}
+  #seq{position:absolute;inset:0;width:100%;height:100%}
+  .indulge{position:absolute;left:50%;top:50%;margin:0;transform:translate(-50%,-50%);font-family:'Bodoni Moda',serif;font-weight:500;
+    font-size:clamp(84px,19vw,330px);letter-spacing:-.02em;line-height:1;color:rgba(40,30,50,.2);mix-blend-mode:multiply;
+    white-space:nowrap;user-select:none;pointer-events:none;will-change:transform,opacity}
+  .loader{position:absolute;left:40px;bottom:30px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);transition:opacity .5s}
+  .loader.done{opacity:0}
+  .side{position:absolute;left:40px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:left center;font-size:11px;letter-spacing:.32em;
+    text-transform:uppercase;display:flex;gap:14px;align-items:center;white-space:nowrap;translate:6px 120px;transition:color .4s}
+  .side i{width:40px;height:1px;background:currentColor;opacity:.5}
+  .intro{position:absolute;left:40px;top:max(110px,15vh);max-width:250px;font-size:13px;line-height:1.55;color:var(--muted);transition:opacity .4s}
+  .steps{position:absolute;right:40px;top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;text-align:right;transition:color .4s}
+  .steps li{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;transition:opacity .4s,transform .4s;display:flex;align-items:center;justify-content:flex-end;gap:10px}
+  .steps li::after{content:"";width:0;height:1px;background:currentColor;transition:width .4s}
+  .steps li.on{opacity:1}
+  .steps li.on::after{width:34px}
+  .caption{position:absolute;left:50%;bottom:clamp(70px,11vh,120px);transform:translateX(-50%);text-align:center;width:min(560px,86vw);transition:color .4s}
+  .caption p{margin:0;font-family:'Bodoni Moda',serif;font-style:italic;font-size:clamp(20px,2.1vw,30px);line-height:1.25}
+  .cue{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.6;
+    display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .4s}
+  .cue i{width:1px;height:28px;background:currentColor;animation:cue 1.8s ease-in-out infinite;transform-origin:top}
+  @keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+  body.hero-dark .side,body.hero-dark .steps,body.hero-dark .caption{color:var(--paper)}
+  body.hero-dark .intro,body.hero-dark .cue{opacity:0}
+
+  /* flavours carousel */
+  .flavours{position:relative;height:100vh;min-height:620px;background:var(--bg,#24103a);color:var(--paper);overflow:hidden;transition:background-color .8s ease}
+  .fl-viewport{position:absolute;inset:0;overflow:hidden;touch-action:pan-y}
+  .fl-track{display:flex;height:100%;transition:transform .9s cubic-bezier(.7,0,.2,1)}
+  .slide{flex:0 0 100%;height:100%;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;padding:110px 9vw 90px;gap:4vw}
+  .eyebrow{font-size:12px;letter-spacing:.24em;text-transform:uppercase;opacity:.7;margin:0 0 24px}
+  .slide h2{margin:0;font-family:'Bodoni Moda',serif;font-weight:500;font-size:clamp(64px,10vw,170px);line-height:.88;letter-spacing:-.01em;text-transform:uppercase}
+  .slide p.body{max-width:34ch;margin:28px 0 30px;font-size:15px;line-height:1.65;opacity:.78}
+  .ghost{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(246,241,232,.55);border-radius:999px;padding:12px 22px;font-size:12px;
+    letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:background .25s,color .25s}
+  .ghost:hover{background:var(--paper);color:var(--ink)}
+  .shot{display:grid;place-items:center}
+  .shot img{width:min(46vw,74vh);height:auto;aspect-ratio:1;object-fit:cover;animation:float 8s ease-in-out infinite;
+    -webkit-mask:radial-gradient(closest-side,#000 64%,transparent 100%);mask:radial-gradient(closest-side,#000 64%,transparent 100%)}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-16px) rotate(2deg)}}
+  .fl-arrow{position:absolute;top:50%;z-index:3;width:48px;height:48px;margin-top:-24px;border-radius:50%;border:1px solid rgba(246,241,232,.35);
+    background:transparent;color:var(--paper);cursor:pointer;display:grid;place-items:center;transition:background .25s}
+  .fl-arrow:hover{background:rgba(246,241,232,.12)}
+  .fl-arrow.prev{left:24px}.fl-arrow.next{right:24px}
+  .fl-dots{position:absolute;left:50%;bottom:36px;transform:translateX(-50%);display:flex;gap:10px;z-index:3}
+  .fl-dots button{width:8px;height:8px;padding:0;border-radius:999px;border:0;background:rgba(246,241,232,.35);cursor:pointer;transition:width .4s,background .4s}
+  .fl-dots button.on{width:28px;background:var(--paper)}
+  .fl-count{position:absolute;right:40px;bottom:32px;font-size:12px;letter-spacing:.2em;opacity:.7;font-variant-numeric:tabular-nums}
+
+  /* menu */
+  .menu{padding:150px 40px 120px;background:var(--cream)}
+  .sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:60px;flex-wrap:wrap}
+  .sec-head h2{margin:0;font-family:'Bodoni Moda',serif;font-weight:500;font-size:clamp(48px,7vw,112px);line-height:.92}
+  .sec-head p{margin:0;max-width:34ch;color:var(--muted);line-height:1.6;font-size:15px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .card{background:var(--paper);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s}
+  .card:hover{transform:translateY(-6px);box-shadow:0 30px 60px -30px rgba(40,20,60,.35)}
+  .card .art{aspect-ratio:1;border-radius:16px;overflow:hidden;background:var(--tint)}
+  .card .art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .art img{transform:scale(1.06)}
+  .card h3{margin:6px 0 0;font-family:'Bodoni Moda',serif;font-weight:500;font-size:26px}
+  .card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;flex:1}
+  .card-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600}
+  .add{border:0;border-radius:999px;background:var(--ink);color:var(--paper);padding:10px 16px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .25s,transform .2s}
+  .add:hover{background:var(--violet)}
+  .add:active{transform:scale(.96)}
+
+  /* ritual */
+  .ritual{padding:120px 40px 140px;background:var(--cream-2)}
+  .ritual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;border-top:1px solid rgba(28,23,38,.15);padding-top:40px}
+  .ritual-grid .n{font-family:'Bodoni Moda',serif;font-size:clamp(56px,6vw,96px);line-height:1;color:var(--violet)}
+  .ritual-grid h3{margin:18px 0 10px;font-family:'Bodoni Moda',serif;font-weight:500;font-size:30px}
+  .ritual-grid p{margin:0;color:var(--muted);line-height:1.6;max-width:30ch}
+
+  /* footer */
+  .foot{background:var(--plum);color:var(--paper);padding:140px 40px 40px}
+  .foot h2{margin:0 0 30px;font-family:'Bodoni Moda',serif;font-weight:500;font-size:clamp(46px,7vw,112px);line-height:.95}
+  .sub{display:flex;gap:10px;max-width:520px;border-bottom:1px solid rgba(246,241,232,.4);padding-bottom:10px}
+  .sub input{flex:1;border:0;background:transparent;color:var(--paper);font-size:16px;padding:10px 0;outline:none}
+  .sub input::placeholder{color:rgba(246,241,232,.5)}
+  .sub button{border:0;background:var(--paper);color:var(--ink);border-radius:999px;padding:10px 20px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;cursor:pointer}
+  .sub-msg{min-height:22px;margin:14px 0 0;font-size:14px;color:var(--lav)}
+  .foot-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:120px;font-size:12px;opacity:.6}
+
+  /* floating buttons */
+  .fab{position:fixed;bottom:24px;z-index:55;width:52px;height:52px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;
+    box-shadow:0 10px 30px rgba(28,23,38,.25);transition:transform .25s}
+  .fab:hover{transform:scale(1.06)}
+  .fab-l{left:24px;background:var(--ink);color:var(--paper)}
+  .fab-r{right:24px;background:var(--violet);color:#fff}
+  .badge{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--paper);color:var(--ink);
+    font-size:11px;font-weight:700;display:grid;place-items:center;transform:scale(0);transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+  .badge.on{transform:scale(1)}
+  .fab svg{width:20px;height:20px}
+
+  /* overlays */
+  .menu-ov{position:fixed;inset:0;z-index:70;background:var(--plum);color:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:40px;
+    clip-path:circle(0 at calc(100% - 60px) 42px);transition:clip-path .7s cubic-bezier(.7,0,.2,1);visibility:hidden}
+  .menu-ov.open{clip-path:circle(150% at calc(100% - 60px) 42px);visibility:visible}
+  .menu-ov a{font-family:'Bodoni Moda',serif;font-size:clamp(44px,8vw,110px);text-decoration:none;line-height:1.08;width:max-content}
+  .menu-ov a:hover{font-style:italic;color:var(--lav)}
+  .close{position:absolute;top:22px;right:40px;width:44px;height:44px;border-radius:50%;border:1px solid currentColor;background:transparent;cursor:pointer;font-size:20px}
+  .drawer{position:fixed;top:0;right:0;bottom:0;z-index:80;width:min(420px,100vw);background:var(--paper);box-shadow:-30px 0 60px rgba(28,23,38,.2);
+    transform:translateX(105%);transition:transform .5s cubic-bezier(.7,0,.2,1);display:flex;flex-direction:column;padding:28px}
+  .drawer.open{transform:none}
+  .drawer h3{margin:0 0 20px;font-family:'Bodoni Moda',serif;font-weight:500;font-size:34px}
+  .drawer .close{top:26px;right:26px;color:var(--ink)}
+  .lines{flex:1;overflow:auto;list-style:none;margin:0;padding:0}
+  .lines li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid rgba(28,23,38,.1);font-size:15px}
+  .lines .qty{display:flex;align-items:center;gap:8px}
+  .lines .qty button{width:28px;height:28px;border-radius:50%;border:1px solid rgba(28,23,38,.25);background:transparent;cursor:pointer}
+  .empty{color:var(--muted)}
+  .total{display:flex;justify-content:space-between;font-weight:600;padding:18px 0 14px}
+  .checkout{border:0;border-radius:999px;background:var(--ink);color:var(--paper);padding:15px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+  .note{margin:10px 0 0;font-size:12px;color:var(--muted);text-align:center}
+  .scrim{position:fixed;inset:0;z-index:75;background:rgba(28,23,38,.35);opacity:0;pointer-events:none;transition:opacity .4s}
+  .scrim.on{opacity:1;pointer-events:auto}
+
+  @media (max-width:860px){
+    .nav{padding:16px 20px}.brand span{display:none}
+    .side{display:none}.intro{left:20px;top:84px}
+    .steps{right:20px;top:auto;bottom:clamp(130px,19vh,190px);transform:none;flex-direction:row;gap:12px}
+    .steps li{font-size:10px}.steps li::after{display:none}
+    .slide{grid-template-columns:1fr;grid-template-rows:auto 1fr;padding:100px 24px 100px;gap:10px;align-content:center}
+    .shot{order:-1}.shot img{width:min(78vw,40vh)}
+    .slide p.body{margin:18px 0 22px}
+    .fl-arrow{display:none}.fl-count{right:20px}
+    .menu,.ritual{padding-left:20px;padding-right:20px}
+    .cards{grid-template-columns:1fr 1fr;gap:12px}.card{padding:14px;border-radius:18px}.card h3{font-size:21px}
+    .ritual-grid{grid-template-columns:1fr;gap:30px}
+    .foot{padding:110px 20px 100px}
+    .menu-ov{padding:24px}.close{right:20px;top:16px}
+  }
+  @media (max-height:600px) and (min-width:861px){ .intro,.side{display:none} }
+  @media (prefers-reduced-motion:reduce){ .shot img{animation:none} .cue i{animation:none} }
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="#top"><b>CREAM</b><span>No. 4 · Melt Melt — Blueberry liquid transformation</span></a>
+  <div class="nav-r">
+    <a class="pill" href="#subscribe">Subscribe</a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="stage">
+      <canvas id="seq" role="img" aria-label="A scoop of vanilla ice cream with blueberries. As you scroll, blueberry sauce wraps around it, splashes and melts."></canvas>
+      <h1 class="indulge" id="indulge">INDULGE</h1>
+      <p class="loader" id="loader">Loading 0%</p>
+      <p class="intro">Small-batch ice cream, poured to order. Our fourth recipe starts with vanilla and ends somewhere purple.</p>
+      <div class="side">Cream <i></i> <span id="sideNum">01</span></div>
+      <ol class="steps" id="steps"><li>01 Scoop</li><li>02 Pour</li><li>03 Splash</li><li>04 Melt</li></ol>
+      <div class="caption" aria-live="polite"><p id="caption">Madagascar vanilla, churned slow.</p></div>
+      <div class="cue" id="cue">Scroll <i></i></div>
+    </div>
+  </section>
+
+  <section class="flavours" id="flavours" data-theme="dark" aria-roledescription="carousel" aria-label="Flavours">
+    <div class="fl-viewport" id="flViewport">
+      <div class="fl-track" id="flTrack">
+        <article class="slide" data-bg="#17062a" aria-label="1 of 4">
+          <div class="slide-copy">
+            <p class="eyebrow">Section 1 — Blueberry</p>
+            <h2>Let it<br>melt</h2>
+            <p class="body">Wild blueberries cooked down slowly, then folded through Madagascar vanilla while the sauce is still warm.</p>
+            <a class="ghost" href="#menu">Explore <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="shot"><img src="assets/blueberry.webp" alt="A giant blueberry glazed in purple syrup" width="900" height="900" loading="lazy" decoding="async"></div>
+        </article>
+        <article class="slide" data-bg="#130500" aria-label="2 of 4">
+          <div class="slide-copy">
+            <p class="eyebrow">Section 2 — Salted caramel</p>
+            <h2>Slow &amp;<br>golden</h2>
+            <p class="body">Caramel taken right to the edge of burnt, then cut with flaked sea salt so it never turns sweet for long.</p>
+            <a class="ghost" href="#menu">Explore <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="shot"><img src="assets/caramel.webp" alt="A scoop of salted caramel ice cream wrapped in caramel sauce" width="900" height="900" loading="lazy" decoding="async"></div>
+        </article>
+        <article class="slide" data-bg="#180207" aria-label="3 of 4">
+          <div class="slide-copy">
+            <p class="eyebrow">Section 3 — Black cherry</p>
+            <h2>Dark<br>matter</h2>
+            <p class="body">Black cherries and 70% chocolate, rich enough to lose a spoon in. Best eaten slightly too soon.</p>
+            <a class="ghost" href="#menu">Explore <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="shot"><img src="assets/cherry.webp" alt="A scoop of chocolate ice cream with black cherry sauce and two cherries" width="900" height="900" loading="lazy" decoding="async"></div>
+        </article>
+        <article class="slide" data-bg="#070e04" aria-label="4 of 4">
+          <div class="slide-copy">
+            <p class="eyebrow">Section 4 — Pistachio</p>
+            <h2>Green<br>hour</h2>
+            <p class="body">Sicilian pistachios, roasted and ground in-house. The green is the nut and nothing else.</p>
+            <a class="ghost" href="#menu">Explore <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="shot"><img src="assets/pistachio.webp" alt="A scoop of pistachio ice cream with crushed pistachios" width="900" height="900" loading="lazy" decoding="async"></div>
+        </article>
+      </div>
+    </div>
+    <button class="fl-arrow prev" id="flPrev" aria-label="Previous flavour"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m15 5-7 7 7 7"/></svg></button>
+    <button class="fl-arrow next" id="flNext" aria-label="Next flavour"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m9 5 7 7-7 7"/></svg></button>
+    <div class="fl-dots" id="flDots" role="tablist"></div>
+    <div class="fl-count" id="flCount">01 / 04</div>
+  </section>
+
+  <section class="menu" id="menu">
+    <div class="sec-head">
+      <h2>The menu</h2>
+      <p>Four pints, made in small batches every Thursday. Order by Wednesday night and it ships in dry ice.</p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="ritual" id="ritual">
+    <div class="sec-head">
+      <h2>How to melt</h2>
+      <p>It tastes best a few degrees warmer than your freezer. Give it a little time.</p>
+    </div>
+    <div class="ritual-grid">
+      <div><div class="n">01</div><h3>Rest it</h3><p>Take it out of the freezer and leave it on the counter for ten minutes.</p></div>
+      <div><div class="n">02</div><h3>Pour it</h3><p>Warm the sauce until it runs, then pour it over in one slow ribbon.</p></div>
+      <div><div class="n">03</div><h3>Chase it</h3><p>Eat it before the swirl settles. That part is up to you.</p></div>
+    </div>
+  </section>
+
+  <footer class="foot" id="subscribe" data-theme="dark">
+    <h2>First scoops,<br><em>in your inbox.</em></h2>
+    <form class="sub" id="subForm" novalidate>
+      <label for="email" class="sr" style="position:absolute;left:-9999px">Email address</label>
+      <input id="email" type="email" placeholder="Your email address" autocomplete="email" required>
+      <button type="submit">Subscribe</button>
+    </form>
+    <p class="sub-msg" id="subMsg" aria-live="polite"></p>
+    <div class="foot-row"><span>© 2026 Cream</span><span>Made in small batches. Eaten quickly.</span></div>
+  </footer>
+</main>
+
+<button class="fab fab-l" id="motionBtn" aria-label="Pause motion" aria-pressed="false">
+  <svg viewBox="0 0 24 24" fill="currentColor" id="motionIcon"><rect x="7" y="5" width="3.2" height="14" rx="1"/><rect x="13.8" y="5" width="3.2" height="14" rx="1"/></svg>
+</button>
+<button class="fab fab-r" id="cartBtn" aria-label="Open basket">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>
+  <span class="badge" id="badge">0</span>
+</button>
+
+<nav class="menu-ov" id="menuOv" aria-label="Site">
+  <button class="close" id="menuClose" aria-label="Close menu">×</button>
+  <a href="#top">Indulge</a><a href="#flavours">Flavours</a><a href="#menu">Menu</a><a href="#ritual">Ritual</a><a href="#subscribe">Subscribe</a>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Basket">
+  <h3>Your basket</h3>
+  <button class="close" id="drawerClose" aria-label="Close basket">×</button>
+  <ul class="lines" id="lines"></ul>
+  <div class="total"><span>Subtotal</span><span id="subtotal">£0.00</span></div>
+  <button class="checkout" id="checkout">Checkout</button>
+  <p class="note" id="checkoutNote">This is a demo store. Checkout isn't connected yet.</p>
+</aside>
+
+
+<script>
+(() => {
+'use strict';
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, x) => { const t = clamp((x - a)/(b - a)); return t*t*(3 - 2*t); };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- hero: scroll-scrubbed frame sequence ---------- */
+const hero = document.getElementById('hero'), cv = document.getElementById('seq'), ctx = cv.getContext('2d');
+const indulge = document.getElementById('indulge'), stepsEl = [...document.querySelectorAll('#steps li')];
+const captionEl = document.getElementById('caption'), sideNum = document.getElementById('sideNum'), cue = document.getElementById('cue');
+const loader = document.getElementById('loader');
+const CAPTIONS = ['Madagascar vanilla, churned slow.', 'Then the blueberry goes in, still warm.', 'It never lands the same way twice.', 'Let it melt.'];
+const STEP_AT = [0, .1, .46, .74];          // where each step starts, as a share of the clip
+const SEQ_END = .84;                          // the clip ends here; the purple flood takes over after
+const FILL = '#17062a';
+const N = 150;
+const DIR = (Math.min(innerWidth, innerHeight * 1.78) < 900 ? 'assets/frames/720/' : 'assets/frames/1280/');
+const frames = new Array(N); let loaded = 0, dirty = true;
+const poster = new Image(); poster.onload = () => { dirty = true; }; poster.src = 'assets/hero-poster.webp';
+
+// Coarse-to-fine load order, so scrubbing works before every frame has arrived.
+const queue = []; { const seen = new Set(); for (let st = 32; st >= 1; st >>= 1) for (let i = 0; i < N; i += st) if (!seen.has(i)){ seen.add(i); queue.push(i); } }
+let inflight = 0;
+function pump(){
+  while (inflight < 6 && queue.length){
+    const i = queue.shift(), im = new Image(); inflight++;
+    im.decoding = 'async';
+    im.onload = () => { frames[i] = im; loaded++; inflight--; dirty = true;
+      loader.textContent = `Loading ${Math.round(loaded/N*100)}%`; if (loaded === N) loader.classList.add('done'); pump(); };
+    im.onerror = () => { inflight--; pump(); };
+    im.src = DIR + 'f_' + String(i + 1).padStart(3, '0') + '.webp';
+  }
+}
+pump();
+function frameNear(i){
+  if (frames[i]) return frames[i];
+  for (let d = 1; d < N; d++){ if (frames[i - d]) return frames[i - d]; if (frames[i + d]) return frames[i + d]; }
+  return poster.complete && poster.naturalWidth ? poster : null;
+}
+
+let pT = 0, pS = 0, time = 0, motion = !reduced, heroVis = true, lastKey = '';
+function readHero(){ const r = hero.getBoundingClientRect(); pT = clamp(-r.top/Math.max(1, hero.offsetHeight - innerHeight)); }
+addEventListener('scroll', readHero, { passive: true }); addEventListener('resize', () => { readHero(); dirty = true; }); readHero();
+new IntersectionObserver(e => { heroVis = e[0].isIntersecting; }, { rootMargin: '80px' }).observe(hero);
+
+let lastStep = -1;
+function renderHero(dt){
+  pS += (pT - pS)*(1 - Math.exp(-dt*9)); if (Math.abs(pT - pS) < 1e-4) pS = pT;
+  const p = pS, sp = clamp(p/SEQ_END), fill = smooth(.8, 1, p);
+  let step = 0; for (let i = 0; i < STEP_AT.length; i++) if (sp >= STEP_AT[i]) step = i;
+  if (step !== lastStep){
+    lastStep = step; stepsEl.forEach((li, i) => li.classList.toggle('on', i === step));
+    captionEl.textContent = CAPTIONS[step]; sideNum.textContent = '0' + (step + 1);
+  }
+  indulge.style.transform = `translate(-50%,-50%) scale(${1 + p*.1})`;
+  indulge.style.opacity = String(1 - fill);
+  cue.style.opacity = String(.6*(1 - clamp(p/.04)));
+  document.body.classList.toggle('hero-dark', fill > .55);
+
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+  const bw = Math.round(w*dpr), bh = Math.round(h*dpr);
+  if (cv.width !== bw || cv.height !== bh){ cv.width = bw; cv.height = bh; dirty = true; }
+  const fi = Math.round(sp*(N - 1)), key = fi + ':' + bw + 'x' + bh;
+  if (!dirty && key === lastKey && !(fill > 0 && fill < 1)) return;
+  dirty = false; lastKey = key;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const img = frameNear(fi);
+  if (img){
+    // cover-fit; portrait screens zoom out a little so the splash is not cropped away
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const s = Math.max(w/iw, h/ih) * (w < h ? .78 : 1);
+    const dw = iw*s, dh = ih*s;
+    ctx.fillStyle = '#e4dccf'; ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, (w - dw)/2, (h - dh)/2, dw, dh);
+  }
+  if (fill > 0){
+    const level = h*(1 - (fill*1.3 - .15));
+    const wave = x => level - (.03*Math.sin(x/w*8 + time*1.6) + .014*Math.sin(x/w*21 - time*2.4))*h;
+    ctx.beginPath(); ctx.moveTo(0, h); for (let x = 0; x <= w + 8; x += 8) ctx.lineTo(x, wave(x)); ctx.lineTo(w, h); ctx.closePath();
+    const g = ctx.createLinearGradient(0, level - .05*h, 0, level + .3*h); g.addColorStop(0, '#5a2a86'); g.addColorStop(1, FILL);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); for (let x = 0; x <= w + 8; x += 8) x ? ctx.lineTo(x, wave(x) + 2) : ctx.moveTo(x, wave(x) + 2);
+    ctx.strokeStyle = 'rgba(225,200,255,.55)'; ctx.lineWidth = 2; ctx.stroke();
+  }
+}
+
+/* ---------- theme for nav ---------- */
+const darkSections = [...document.querySelectorAll('[data-theme="dark"]')];
+function updateTheme(){
+  const y = 40; let dark = document.body.classList.contains('hero-dark') && hero.getBoundingClientRect().bottom > y;
+  for (const s of darkSections){ const r = s.getBoundingClientRect(); if (r.top <= y && r.bottom > y) dark = true; }
+  document.body.classList.toggle('on-dark', dark);
+}
+
+/* ---------- flavour carousel ---------- */
+const flSec = document.getElementById('flavours'), track = document.getElementById('flTrack'), slides = [...track.children];
+const dotsEl = document.getElementById('flDots'), countEl = document.getElementById('flCount');
+let fl = 0;
+slides.forEach((s, i) => { const b = document.createElement('button'); b.setAttribute('role', 'tab'); b.setAttribute('aria-label', `Flavour ${i + 1}`); b.onclick = () => go(i); dotsEl.appendChild(b); });
+function go(i){
+  fl = (i + slides.length) % slides.length;
+  track.style.transform = `translateX(${-fl*100}%)`;
+  flSec.style.setProperty('--bg', slides[fl].dataset.bg);
+  [...dotsEl.children].forEach((d, j) => { d.classList.toggle('on', j === fl); d.setAttribute('aria-selected', String(j === fl)); });
+  slides.forEach((s, j) => s.setAttribute('aria-hidden', String(j !== fl)));
+  countEl.textContent = `0${fl + 1} / 0${slides.length}`;
+}
+document.getElementById('flPrev').onclick = () => go(fl - 1);
+document.getElementById('flNext').onclick = () => go(fl + 1);
+flSec.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') go(fl - 1); if (e.key === 'ArrowRight') go(fl + 1); });
+let sx = null;
+const vp = document.getElementById('flViewport');
+vp.addEventListener('pointerdown', e => { sx = e.clientX; });
+vp.addEventListener('pointerup', e => { if (sx != null && Math.abs(e.clientX - sx) > 50) go(fl + (e.clientX < sx ? 1 : -1)); sx = null; });
+vp.addEventListener('pointercancel', () => { sx = null; });
+go(0);
+
+/* ---------- menu + basket ---------- */
+const PRODUCTS = [
+  { id: 'blueberry', name: 'Melt Melt', note: 'Vanilla, warm blueberry ribbon', price: 8.5, tint: '#e3ddf0', o: ['#8f95d6', '#3d4185', '#1d1f4a', '#0c0d22'], bloom: .5 },
+  { id: 'caramel', name: 'Slow & Golden', note: 'Burnt caramel, flaked sea salt', price: 8, tint: '#f1e2cc', o: ['#ffe0a0', '#e2933a', '#9a4d14', '#3e1c06'] },
+  { id: 'cherry', name: 'Dark Matter', note: 'Black cherry, 70% chocolate', price: 8.5, tint: '#f0d9dc', o: ['#ff8a96', '#c3263b', '#6e0b18', '#2a0308'] },
+  { id: 'pistachio', name: 'Green Hour', note: 'Roasted Sicilian pistachio', price: 9, tint: '#e3e8d2', o: ['#e6f0b4', '#a3bb5c', '#55702a', '#1f2b0d'] }
+];
+const money = n => '£' + n.toFixed(2);
+const cardsEl = document.getElementById('cards');
+cardsEl.innerHTML = PRODUCTS.map(p => `
+  <article class="card" style="--tint:${p.tint}">
+    <div class="art"><img src="assets/${p.id}.webp" alt="" width="900" height="900" loading="lazy" decoding="async"></div>
+    <h3>${p.name}</h3><p>${p.note}</p>
+    <div class="card-row"><span>${money(p.price)} · 500 ml</span><button class="add" data-id="${p.id}">Add</button></div>
+  </article>`).join('');
+const cart = new Map();
+const badge = document.getElementById('badge'), linesEl = document.getElementById('lines'), subtotalEl = document.getElementById('subtotal');
+function renderCart(){
+  let n = 0, sum = 0; const rows = [];
+  for (const [id, q] of cart){ const p = PRODUCTS.find(x => x.id === id); n += q; sum += q*p.price;
+    rows.push(`<li><span>${p.name}</span><span class="qty"><button data-dec="${id}" aria-label="Remove one ${p.name}">−</button>${q}<button data-inc="${id}" aria-label="Add one ${p.name}">+</button></span><span>${money(q*p.price)}</span></li>`); }
+  linesEl.innerHTML = rows.length ? rows.join('') : '<li class="empty">Nothing in here yet.</li>';
+  subtotalEl.textContent = money(sum); badge.textContent = n; badge.classList.toggle('on', n > 0);
+}
+const addTo = (id, d) => { const q = (cart.get(id) || 0) + d; if (q <= 0) cart.delete(id); else cart.set(id, q); renderCart(); };
+cardsEl.addEventListener('click', e => { const b = e.target.closest('.add'); if (!b) return; addTo(b.dataset.id, 1);
+  b.textContent = 'Added'; setTimeout(() => { b.textContent = 'Add'; }, 900); });
+linesEl.addEventListener('click', e => { const t = e.target; if (t.dataset.inc) addTo(t.dataset.inc, 1); if (t.dataset.dec) addTo(t.dataset.dec, -1); });
+renderCart();
+
+const drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim');
+const openDrawer = v => { drawer.classList.toggle('open', v); scrim.classList.toggle('on', v); if (v) document.getElementById('drawerClose').focus(); };
+document.getElementById('cartBtn').onclick = () => openDrawer(true);
+document.getElementById('drawerClose').onclick = () => openDrawer(false);
+scrim.onclick = () => { openDrawer(false); openMenu(false); };
+document.getElementById('checkout').onclick = () => { document.getElementById('checkoutNote').textContent = cart.size ? 'Thanks! This demo store stops here, so no payment was taken.' : 'Add a pint first.'; };
+
+const menuOv = document.getElementById('menuOv'), burger = document.getElementById('burger');
+const openMenu = v => { menuOv.classList.toggle('open', v); burger.setAttribute('aria-expanded', String(v)); if (v) document.getElementById('menuClose').focus(); };
+burger.onclick = () => openMenu(true);
+document.getElementById('menuClose').onclick = () => openMenu(false);
+menuOv.addEventListener('click', e => { if (e.target.tagName === 'A') openMenu(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape'){ openMenu(false); openDrawer(false); } });
+
+document.getElementById('subForm').addEventListener('submit', e => {
+  e.preventDefault(); const v = document.getElementById('email').value.trim(), msg = document.getElementById('subMsg');
+  msg.textContent = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'You’re on the list. First scoops land on Thursday.' : 'That email doesn’t look right yet.';
+});
+
+const motionBtn = document.getElementById('motionBtn'), motionIcon = document.getElementById('motionIcon');
+function syncMotion(){
+  motionBtn.setAttribute('aria-pressed', String(!motion)); motionBtn.setAttribute('aria-label', motion ? 'Pause motion' : 'Play motion');
+  motionIcon.innerHTML = motion ? '<rect x="7" y="5" width="3.2" height="14" rx="1"/><rect x="13.8" y="5" width="3.2" height="14" rx="1"/>' : '<path d="M8 5.5v13l11-6.5z"/>';
+  document.querySelectorAll('.shot img').forEach(o => { o.style.animationPlayState = motion ? 'running' : 'paused'; });
+}
+motionBtn.onclick = () => { motion = !motion; syncMotion(); };
+syncMotion();
+
+/* ---------- loop ---------- */
+let last = performance.now();
+function frame(now){
+  const dt = Math.min(.05, (now - last)/1000); last = now;
+  if (motion) time += dt;
+  if (heroVis) renderHero(dt);
+  updateTheme();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
